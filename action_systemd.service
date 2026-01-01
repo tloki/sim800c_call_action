@@ -1,0 +1,19 @@
+[Unit]
+Description=SIM Phone Action Runner
+After=network.target
+
+# fill these values in
+[Service]
+Type=simple
+User=<system_username>
+Group=<system_username_group>
+WorkingDirectory=/path/to/sim800c_call_action
+ExecStart=/path/to/sim800c_call_action/venv/bin/python /path/to/sim800c_call_action/main.py
+Restart=on-failure
+RestartSec=30s
+
+StandardOutput=append:/path/to/sim800c_call_action/log.txt
+StandardError=append:/path/to/sim800c_call_action/log.txt
+
+[Install]
+WantedBy=multi-user.target

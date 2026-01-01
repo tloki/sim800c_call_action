@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "sim800c-call-action"
+version = "0"
+description = "A set of scripts to set up your Smart Home to do actions upon making a call / sms to it. With some specifics with HR Prepaid Carrier BonBon"
+authors = ["tloki"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "~3.11"
+requests = "^2.32.5"
+pyserial = "^3.5"
+phonenumbers = "^9.0.21"
+
+
+
+
+[build-system]
+requires = ["poetry-core==1.9.1"]
+build-backend = "poetry.core.masonry.api"
