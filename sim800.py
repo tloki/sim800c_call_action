@@ -73,6 +73,7 @@ class SIM800CHandler:
         self._initialize()
 
         self._main_event_loop_thread = threading.Thread(target=self._main_loop, daemon=False)
+        assert self._main_event_loop_thread is not None
         self._main_event_loop_thread.start()
 
     def kill(self) -> None:
@@ -96,6 +97,7 @@ class SIM800CHandler:
                 raise RuntimeError("Unable to get own number")
             self._my_number = nr
 
+        assert self._my_number is not None
         return self._my_number
 
     def _get_own_number(self) -> Optional[str]:
@@ -112,7 +114,7 @@ class SIM800CHandler:
 
         response = response.replace("+CNUM", "")
 
-        matches = re.search(pattern="\+[0-9]+", string=response)
+        matches = re.search(pattern=r"\+[0-9]+", string=response)
         if matches:
             return matches.group(0)
 
@@ -150,7 +152,7 @@ class SIM800CHandler:
         Returns the modem response (expects '+CMGS:' then 'OK' on success). [web:24][web:25]
         """
         logger.debug(f'Sending SMS with content "{text}" to "{to_number}"')
-        # Ensure text mode (you already do this in initialize, but it's safe to set again). [web:24]
+        # Ensure text mode (you already do this in `initialize`, but it's safe to set again). [web:24]
         logger.debug(f'Re-initialize SMS text mode')
         self._send_at_command(command="AT+CMGF=1", delay=1)  # [web:24]
 
@@ -214,6 +216,15 @@ class SIM800CHandler:
 
         logger.info("SIM800C ready")
 
+    @staticmethod
+    def parse_sender(raw: str) -> str:
+        if set(raw).issubset("+0123456789"):
+            return raw
+
+        # TODO: implement
+        raise NotImplementedError
+        # return
+
     def _parse_incoming_data(self, line: str) -> None:
         line = line.strip()
         logger.debug(f"Parsing incoming data '{line}'")
@@ -243,7 +254,7 @@ class SIM800CHandler:
             try:
                 parts = line.split('"')
                 if len(parts) >= 2:
-                    sender = parts[1]
+                    sender = self.parse_sender(raw=parts[1])
                     logger.info(f"Received SMS is coming from '{sender}'")
                     # Next line will contain the message
                     time.sleep(0.1)
@@ -316,7 +327,7 @@ class SIM800CHandler:
         logger.debug("Serial connection closed")
 
     def __del__(self) -> None:
-        return self.close()
+        self.close()
 
 
 # Example code run. TODO: delete it, as proper implementation is in main.py
@@ -335,7 +346,7 @@ def main() -> None:
     time.sleep(5)
 
     cellular.send_ussd_queue.put(
-        item=USSDRequestData(code="*100#", callback=lambda x: print(f"response to ussd code '*100#' is: '{x}'")))
+        item=USSDRequestData(code="*100#", callback=lambda x: print(f"response to USSD code '*100#' is: '{x}'")))
 
     while True:
         try:
