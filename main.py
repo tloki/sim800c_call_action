@@ -34,10 +34,10 @@ def _load_web_config() -> dict:
 
 
 _web_cfg = _load_web_config()
-WEB_ENABLED: bool = _web_cfg.get("enabled", False)
-WEB_HOST: str = _web_cfg.get("host", "0.0.0.0")
-WEB_PORT: int = _web_cfg.get("port", 5001)
-WEB_DEBUG: bool = _web_cfg.get("debug", False)
+WEB_ENABLED: bool = _web_cfg.get(key="enabled", default=False)
+WEB_HOST: str = _web_cfg.get(key="host", default="0.0.0.0")
+WEB_PORT: int = _web_cfg.get(key="port", default=5001)
+WEB_DEBUG: bool = _web_cfg.get(key="debug", default=False)
 # ───────────────────────────────────────────────────────────────────────────────
 
 
@@ -47,7 +47,7 @@ def load_usb_config() -> tuple[str, int, int]:
         raise RuntimeError(f"Unable to find '{USB_CONFIG_FILE_NAME}' in path {Path(__file__).parent}")
     with cfg_pth.open(mode="r") as f:
         cfg: dict[str, str | int] = json.load(fp=f)
-    return cfg["com_port"], cfg["baud"], cfg["timeout_money_transfer"]
+    return str(cfg["com_port"]), int(cfg["baud"]), int(cfg["timeout_money_transfer"])
 
 
 def load_bonbon_config() -> tuple[str, str]:
