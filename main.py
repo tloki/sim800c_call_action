@@ -34,10 +34,10 @@ def _load_web_config() -> dict:
 
 
 _web_cfg = _load_web_config()
-WEB_ENABLED: bool = _web_cfg.get(key="enabled", default=False)
-WEB_HOST: str = _web_cfg.get(key="host", default="0.0.0.0")
-WEB_PORT: int = _web_cfg.get(key="port", default=5001)
-WEB_DEBUG: bool = _web_cfg.get(key="debug", default=False)
+WEB_ENABLED: bool = _web_cfg.get("enabled", False)
+WEB_HOST: str = _web_cfg.get("host", "0.0.0.0")
+WEB_PORT: int = _web_cfg.get("port", 5001)
+WEB_DEBUG: bool = _web_cfg.get("debug", False)
 # ───────────────────────────────────────────────────────────────────────────────
 
 
