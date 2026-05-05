@@ -23,7 +23,7 @@ def load_usb_config() -> tuple[str, int, int]:
     cfg_pth = Path(__file__).parent / CONFIG_FILE_NAME
 
     if not cfg_pth.exists():
-        raise RuntimeError(f"Unable to find '{BONBON_CONFIG_FILE_NAME}' in path {Path(__file__).parent}")
+        raise RuntimeError(f"Unable to find '{CONFIG_FILE_NAME}' in path {Path(__file__).parent}")
 
     with cfg_pth.open(mode="r") as f:
         cfg: dict[str, str | int] = json.load(fp=f)
@@ -49,7 +49,7 @@ def load_allowed_number_db() -> set[str]:
     numbers_list_path = Path(__file__).parent / NUMBERS_DB_FILE_NAME
 
     if not numbers_list_path.exists():
-        raise RuntimeError(f"Unable to find '{BONBON_CONFIG_FILE_NAME}' in path {Path(__file__).parent}")
+        raise RuntimeError(f"Unable to find '{NUMBERS_DB_FILE_NAME}' in path {Path(__file__).parent}")
 
     with numbers_list_path.open(mode="r") as f:
         numbers_list: list[str] = json.load(fp=f)
