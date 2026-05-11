@@ -51,7 +51,6 @@ class SIM800CHandler:
         self._do_kill = False
 
         self._main_event_loop_thread: Optional[threading.Thread] = None
-        self._load_device_info()
 
     def register_specific_sms_callback_handle(self, number: str, handle=Callable[[str, str], Any]) -> None:
         # warning: handing of international code etc. should be handled by caller!
@@ -101,6 +100,9 @@ class SIM800CHandler:
             if self._firmware_version.startswith(at_code):
                 self._firmware_version = self._firmware_version[len(at_code):]
                 self._firmware_version = self._firmware_version.strip()
+            if self._firmware_version.startswith(at_code[1:]):
+                self._firmware_version = self._firmware_version[len(at_code[1:]):]
+                self._firmware_version = self._firmware_version.strip()
             if self._firmware_version.startswith("Revision:"):
                 self._firmware_version = self._firmware_version[len("Revision:"):]
                 self._firmware_version = self._firmware_version.strip()
@@ -120,6 +122,9 @@ class SIM800CHandler:
                 self._module_version = self._module_version.strip()
             if self._module_version.startswith(at_code):
                 self._module_version = self._module_version[len(at_code):]
+                self._module_version = self._module_version.strip()
+            if self._module_version.startswith(at_code[1:]):
+                self._module_version = self._module_version[len(at_code[1:]):]
                 self._module_version = self._module_version.strip()
             if self._module_version.startswith("+CSUB:"):
                 self._module_version = self._module_version[len("+CSUB:"):]
