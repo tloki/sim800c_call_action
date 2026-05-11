@@ -87,22 +87,44 @@ class SIM800CHandler:
 
         self.close()
 
-    def _load_device_info(self) -> None:
-        logger.info("getting device info")
-        self._firmware_version = self._send_at_command('AT+GMR')
-        self._module_version = self._send_at_command('AT+CSUB')
-
     @property
     def firmware_version(self) -> str:
+        at_code = "AT+GMR"
+
         if self._firmware_version is None:
-            self._firmware_version = self._send_at_command('AT+GMR')
+            self._firmware_version = self._send_at_command(at_code)
+            assert self._firmware_version is not None
+            self._firmware_version = self._firmware_version.strip()
+            if self._firmware_version.endswith("OK"):
+                self._firmware_version = self._firmware_version[:-2]
+                self._firmware_version = self._firmware_version.strip()
+            if self._firmware_version.startswith(at_code):
+                self._firmware_version = self._firmware_version[len(at_code):]
+                self._firmware_version = self._firmware_version.strip()
+            if self._firmware_version.startswith("Revision:"):
+                self._firmware_version = self._firmware_version[len("Revision:"):]
+                self._firmware_version = self._firmware_version.strip()
+
         assert isinstance(self._firmware_version, str)
         return self._firmware_version
 
     @property
     def module_version(self) -> str:
+        at_code = "AT+CSUB"
         if self._module_version is None:
-            self._module_version = self._send_at_command('AT+CSUB')
+            self._module_version = self._send_at_command(at_code)
+            assert self._module_version is not None
+            self._module_version = self._module_version.strip()
+            if self._module_version.endswith("OK"):
+                self._module_version = self._module_version[:-2]
+                self._module_version = self._module_version.strip()
+            if self._module_version.startswith(at_code):
+                self._module_version = self._module_version[len(at_code):]
+                self._module_version = self._module_version.strip()
+            if self._module_version.startswith("+CSUB:"):
+                self._module_version = self._module_version[len("+CSUB:"):]
+                self._module_version = self._module_version.strip()
+
         assert isinstance(self._module_version, str)
         return self._module_version
 
