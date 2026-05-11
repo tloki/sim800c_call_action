@@ -9,6 +9,8 @@ import serial
 import time
 from queue import Queue
 
+from urllib3.contrib.emscripten import response
+
 
 @dataclass(frozen=True)
 class USSDRequestData:
@@ -232,9 +234,17 @@ class SIM800CHandler:
 
         self.send_sms_queue.put(item=code_request)
 
+    def _get_verbosity_level(self) -> int:
+        at_cmd = "AT+CMEE"
+        response = self._send_at_command(command=at_cmd)
+        print(f"verbosity: '{response}'")
+        return 0
+
     def _initialize(self):
         """Initialize modem and set up for call/SMS handling"""
         logger.info("Initializing SIM800C module...")
+
+        self._get_verbosity_level()
 
         logger.debug("Running basic SIM800C response test (AT command)")
         response = self._send_at_command('AT').strip()
