@@ -9,8 +9,6 @@ import serial
 import time
 from queue import Queue
 
-from urllib3.contrib.emscripten import response
-
 
 @dataclass(frozen=True)
 class USSDRequestData:
