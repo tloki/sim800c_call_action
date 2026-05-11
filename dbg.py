@@ -29,5 +29,8 @@ cellular = SIM800CHandler(
 )
 cellular.run()
 
+print(f"Board version is: '{cellular.module_version}'")
+print(f"Firmware version is: '{cellular.firmware_version}'")
+
 print("sleeping")
 time.sleep(5)
