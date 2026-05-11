@@ -233,7 +233,7 @@ class SIM800CHandler:
         self.send_sms_queue.put(item=code_request)
 
     def _get_verbosity_level(self) -> int:
-        at_cmd = "AT+CMEE"
+        at_cmd = "AT+CMEE=2"
         response = self._send_at_command(command=at_cmd)
         print(f"verbosity: '{response}'")
         return 0
