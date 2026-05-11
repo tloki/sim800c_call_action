@@ -28,6 +28,8 @@ logger = getLogger(name=__file__)
 class SIM800CHandler:
     def __init__(self, port: str, baudrate: int, call_handle: Optional[Callable[[str, Callable], Any]],
                  sms_handle: Optional[Callable[[str, str], Any]]) -> None:
+        self._module_version: Optional[str] = None
+        self._firmware_version: Optional[str] = None
         self._my_number: Optional[str] = None
         self._serial_comm = serial.Serial(
             port=port,
@@ -49,6 +51,7 @@ class SIM800CHandler:
         self._do_kill = False
 
         self._main_event_loop_thread: Optional[threading.Thread] = None
+        self._load_device_info()
 
     def register_specific_sms_callback_handle(self, number: str, handle=Callable[[str, str], Any]) -> None:
         # warning: handing of international code etc. should be handled by caller!
@@ -83,6 +86,25 @@ class SIM800CHandler:
             self._main_event_loop_thread.join()
 
         self.close()
+
+    def _load_device_info(self) -> None:
+        logger.info("getting device info")
+        self._firmware_version = self._send_at_command('AT+GMR')
+        self._module_version = self._send_at_command('AT+CSUB')
+
+    @property
+    def firmware_version(self) -> str:
+        if self._firmware_version is None:
+            self._firmware_version = self._send_at_command('AT+GMR')
+        assert isinstance(self._firmware_version, str)
+        return self._firmware_version
+
+    @property
+    def module_version(self) -> str:
+        if self._module_version is None:
+            self._module_version = self._send_at_command('AT+CSUB')
+        assert isinstance(self._module_version, str)
+        return self._module_version
 
     def _decline_call(self) -> None:
         logger.info("Sending call decline command")
